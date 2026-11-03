@@ -33,7 +33,11 @@ export default function SettingsView() {
     usePlayerStore.getState().stop()
     db.close()
     await db.delete()
-    if ('caches' in window) await Promise.all((await caches.keys()).map((k) => caches.delete(k)))
+    // Keep the Workbox precache so the app shell still loads offline after a reset.
+    if ('caches' in window) {
+      const keys = (await caches.keys()).filter((k) => !k.startsWith('workbox-precache'))
+      await Promise.all(keys.map((k) => caches.delete(k)))
+    }
     window.location.reload()
   }
 

@@ -25,7 +25,7 @@ export default function PlayerBar() {
 
   return (
     <section aria-label="Now playing" className="border-t border-slate-800 bg-slate-900/95 px-4 py-3 backdrop-blur">
-      <div className="flex items-center gap-3">
+      <div className="flex flex-wrap items-center gap-x-3 gap-y-2">
         <AlbumArt bundle={bundle} size={44} />
         <div className="min-w-0 flex-1">
           <p className="text-[10px] font-bold uppercase tracking-widest text-indigo-300">
@@ -33,6 +33,7 @@ export default function PlayerBar() {
           </p>
           <p className="truncate text-sm font-semibold">{bundle.title}</p>
         </div>
+        <div className="order-last flex w-full items-center justify-center gap-3 sm:order-none sm:w-auto">
         <button type="button" className={iconBtn} onClick={() => void player.previous()} aria-label="Previous">
           <SkipBack size={18} />
         </button>
@@ -53,6 +54,7 @@ export default function PlayerBar() {
         <button type="button" className={iconBtn} onClick={() => void player.next()} aria-label="Next">
           <SkipForward size={18} />
         </button>
+        </div>
         <button type="button" className={iconBtn} onClick={player.stop} aria-label="Stop and close player">
           <X size={18} />
         </button>
