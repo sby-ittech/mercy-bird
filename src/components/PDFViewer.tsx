@@ -39,20 +39,28 @@ export default function PDFViewer({ bundle, onClose }: Props) {
     const url = objectUrl ?? remoteUrl!
     setDocUrl(url)
     setError(null)
-    const task = pdfjsLib.getDocument({ url, isEvalSupported: false })
-    task.promise.then(
-      (pdf) => {
-        setDoc(pdf)
-        setPage(1)
-        setScale(null)
-      },
-      (err: unknown) => {
-        if (err instanceof Error && err.name === 'AbortException') return
+    let task: ReturnType<typeof pdfjsLib.getDocument> | null = null
+    let disposed = false
+    // Blobs are passed as bytes: CSP connect-src does not allow fetching blob: URLs.
+    const source = blob ? blob.arrayBuffer().then((data) => ({ data })) : Promise.resolve({ url })
+    source
+      .then((src) => {
+        if (disposed) return
+        task = pdfjsLib.getDocument({ ...src, isEvalSupported: false })
+        return task.promise.then((pdf) => {
+          if (disposed) return
+          setDoc(pdf)
+          setPage(1)
+          setScale(null)
+        })
+      })
+      .catch((err: unknown) => {
+        if (disposed || (err instanceof Error && err.name === 'AbortException')) return
         setError(err instanceof Error ? err.message : 'Unable to open PDF')
-      },
-    )
+      })
     return () => {
-      void task.destroy()
+      disposed = true
+      void task?.destroy()
       setDoc(null)
       if (objectUrl) URL.revokeObjectURL(objectUrl)
     }
