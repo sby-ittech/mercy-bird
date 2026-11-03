@@ -2,3 +2,5 @@
 *.pdf binary
 *.mp3 binary
 *.png binary
+*.bat text eol=crlf
+*.jar binary

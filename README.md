@@ -18,6 +18,19 @@ npm run lint
 
 Offline behaviour must be tested against `npm run build && npm run preview` – the service worker only runs in the production build.
 
+## Android APK (Capacitor)
+
+The `android/` project wraps the production build with Capacitor, so the app shell and the sample media ship inside the APK and run with no network.
+
+Requirements: JDK 21 and the Android SDK (platform 35, build-tools 35), with `ANDROID_HOME` set or `android/local.properties` containing `sdk.dir=...`.
+
+```bash
+npm run android:apk   # vite build + cap sync + gradlew assembleDebug
+# -> android/app/build/outputs/apk/debug/app-debug.apk
+```
+
+The debug APK is signed with the Android debug key and can be sideloaded (enable "Install unknown apps"). For Play Store or managed distribution, build a release with your own keystore (`gradlew assembleRelease` plus a signing config).
+
 ## Architecture
 
 | Area | File |
